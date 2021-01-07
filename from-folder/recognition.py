@@ -18,42 +18,34 @@ def name_to_color(name):
     color = [(ord(c.lower())-97)*8 for c in name[:3]]
     return color
 
-
-print('Loading known faces...')
 known_faces = []
 known_names = []
 
-# We oranize known faces as subfolders of KNOWN_FACES_DIR
-# Each subfolder's name becomes our label (name)
-for name in os.listdir(KNOWN_FACES_DIR):
+def encode_photos(folder):
+    print('Known faces')
+    # Each subfolder's name becomes our label (name)
+    for name in os.listdir(folder):
 
-    # Next we load every file of faces of known person
-    for filename in os.listdir(f'{KNOWN_FACES_DIR}/{name}'):
+        # Next we load every file of faces of known person
+        for filename in os.listdir(f'{folder}/{name}'):
 
-        # Load an image
-        image = face_recognition.load_image_file(f'{KNOWN_FACES_DIR}/{name}/{filename}')
+            # Load an image
+            image = face_recognition.load_image_file(f'{folder}/{name}/{filename}')
 
-        # Get 128-dimension face encoding
-        # Always returns a list of found faces, for this purpose we take first face only (assuming one face per image as you can't be twice on one image)
-        try:
-            encoding = face_recognition.face_encodings(image)[0]
-            # Append encodings and name
-            known_faces.append(encoding)
-            known_names.append(name)
-            print(f'Known Faces: Filename {filename} \n', end='')
+            try:
+                encoding = face_recognition.face_encodings(image)[0]
+                # Append encodings and name
+                known_faces.append(encoding)
+                known_names.append(name)
+                print(f'Known Faces: Filename {filename} \n', end='')
 
-        except Exception as e:
-            print(f"Error to encode image: {KNOWN_FACES_DIR}/{name}/{filename} \n {e}")
-            pass
+            except Exception as e:
+                print(f"Error to encode image: {folder}/{name}/{filename} \n {e}")
+                pass
+
+    return known_faces, known_names
         
-print('Processing unknown faces...')
-# Now let's loop over a folder of faces we want to label
-for filename in os.listdir(UNKNOWN_FACES_DIR):
-
-    # Load image
-    print(f'Unknown Faces: Filename {filename}', end='')
-    image = face_recognition.load_image_file(f'{UNKNOWN_FACES_DIR}/{filename}')
-
+def face_recognice(image):
     # This time we first grab face locations - we'll need them to draw boxes
     locations = face_recognition.face_locations(image, model=MODEL)
 
@@ -77,10 +69,8 @@ for filename in os.listdir(UNKNOWN_FACES_DIR):
         # then label (name) of first matching known face withing a tolerance
         match = None
 
-        print(results)
         if True in results:  # If at least one is true, get a name of first of found labels
             match = known_names[results.index(True)]
-            print(f' - {match} from {results}')
 
             # Each location contains positions in order: top, right, bottom, left
             top_left = (face_location[3], face_location[0])
@@ -103,9 +93,20 @@ for filename in os.listdir(UNKNOWN_FACES_DIR):
             # Wite a name
             cv2.putText(image, match, (face_location[3] + 10, face_location[2] + 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (200, 200, 200), FONT_THICKNESS)
 
-            # Show image
-            cv2.imshow(filename, image)
-            cv2.waitKey(0)
-            cv2.destroyWindow(filename)
+        return match
+    
+def from_unknown_folder(folder):
+    # Now let's loop over a folder of faces we want to label
+    for filename in os.listdir(folder):
+        # Load image
+        print(f'Unknown Faces: Filename {filename}', end='')
+        image = face_recognition.load_image_file(f'{folder}/{filename}')
+        match = face_recognice(image)
+        print(match)
+
+
+encode_photos(KNOWN_FACES_DIR)
+from_unknown_folder(UNKNOWN_FACES_DIR)
+    
 
             
