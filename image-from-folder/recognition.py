@@ -40,7 +40,7 @@ for name in os.listdir(KNOWN_FACES_DIR):
             # Append encodings and name
             known_faces.append(encoding)
             known_names.append(name)
-            print(f'Known Faces: Filename {filename}', end='')
+            print(f'Known Faces: Filename {filename} \n', end='')
 
         except Exception as e:
             print(f"Error to encode image: {KNOWN_FACES_DIR}/{name}/{filename} \n {e}")
@@ -107,4 +107,5 @@ for filename in os.listdir(UNKNOWN_FACES_DIR):
             cv2.imshow(filename, image)
             cv2.waitKey(0)
             cv2.destroyWindow(filename)
-    
+
+            
