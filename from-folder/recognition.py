@@ -1,3 +1,5 @@
+# This version return the name of the person found
+
 import face_recognition
 import os
 import cv2

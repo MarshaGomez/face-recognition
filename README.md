@@ -26,3 +26,4 @@ Inside of the directory [*Francesco*](/from-folder/known_faces/Francesco) we hav
 <img src="/from-folder/known_faces/Francesco/2.png" width="100">
 
 <img src="/from-folder/known_faces/Francesco/3.png" width="100">
+
