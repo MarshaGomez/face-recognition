@@ -71,28 +71,6 @@ def face_recognice(image):
 
         if True in results:  # If at least one is true, get a name of first of found labels
             match = known_names[results.index(True)]
-
-            # Each location contains positions in order: top, right, bottom, left
-            top_left = (face_location[3], face_location[0])
-            bottom_right = (face_location[1], face_location[2])
-
-            # Get color by name using our fancy function
-            color = name_to_color(match)
-
-            # Paint frame
-            cv2.rectangle(image, top_left, bottom_right, color, FRAME_THICKNESS)
-
-            # Now we need smaller, filled grame below for a name
-            # This time we use bottom in both corners - to start from bottom and move 50 pixels down
-            top_left = (face_location[3], face_location[2])
-            bottom_right = (face_location[1], face_location[2] + 22)
-
-            # Paint frame
-            cv2.rectangle(image, top_left, bottom_right, color, cv2.FILLED)
-
-            # Wite a name
-            cv2.putText(image, match, (face_location[3] + 10, face_location[2] + 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (200, 200, 200), FONT_THICKNESS)
-
         return match
     
 def from_unknown_folder(folder):
@@ -104,8 +82,10 @@ def from_unknown_folder(folder):
         match = face_recognice(image)
         print(match)
 
-
+# The first step is call the encode photos function for load all the known faces
 encode_photos(KNOWN_FACES_DIR)
+
+# On this step, we call the unknown faces for try to search on our encode data the relation
 from_unknown_folder(UNKNOWN_FACES_DIR)
     
 
